@@ -8,7 +8,7 @@ public class CubeVisual extends Visual
 
     public void settings()
     {
-        size(800, 800, P3D);
+        size(1024, 800, P3D);
         println("CWD: " + System.getProperty("user.dir"));
         //fullScreen(P3D, SPAN);
     }
@@ -26,10 +26,21 @@ public class CubeVisual extends Visual
             twocubes = ! twocubes;
 
         }
+        if(keyCode == RIGHT)
+        {
+            skycolour = 10;
+        }
+        if(keyCode == LEFT)
+        {
+            skycolour = 110;
+        }
     }
+
+    int skycolour;
 
     public void setup()
     {
+        skycolour=150;
         colorMode(HSB);
         noCursor();
         
@@ -44,10 +55,16 @@ public class CubeVisual extends Visual
 
     float smoothedBoxSize = 0;
 
-    public void draw()
+    public void grass()
+    {
+       
+        rect(1-height, 1*-height, 100, 100);
+    }
+
+    public void CubeFloating()
     {
         calculateAverageAmplitude();
-        background(0);
+        background(200,255,255);
         noFill();
         lights();
         stroke(map(getSmoothedAmplitude(), 0, 1, 0, 255), 255, 255);
@@ -87,4 +104,59 @@ public class CubeVisual extends Visual
         angle += 0.01f;
     }
     float angle = 0;
+    
+    public void sphero()
+    {
+    //     background(0);
+    //     noStroke();
+    //     lights();
+    //     fill(gray);
+    //     translate(58, 48, 0);
+        calculateAverageAmplitude();
+        background(skycolour,255,255);
+        // noFill();
+        fill(20,255,255);
+        lights();
+        stroke(map(getSmoothedAmplitude(), 0, 1, 0, 255), 255, 255);
+        camera(0, 0, 0, 0, 0, -1, 0, 1, 0);
+        translate(0, 0, -250);
+        float boxSize = 50 + (getAmplitude() * 300);//map(average, 0, 1, 100, 400); 
+        smoothedBoxSize = lerp(smoothedBoxSize, boxSize, 0.2f);        
+        if (twocubes)
+        {
+            pushMatrix();
+            translate(-100, 0, 0);
+            rotateY(angle);
+            rotateX(angle);
+            sphere(smoothedBoxSize);
+            //strokeWeight(1);
+            //sphere(smoothedBoxSize);
+            popMatrix();
+            pushMatrix();
+            translate(100, 0, 0);
+            rotateY(angle);
+            rotateX(angle);
+            strokeWeight(5); 
+            sphere(smoothedBoxSize);
+            popMatrix();
+        }
+        else
+        {
+            rotateY(angle);
+            rotateX(angle);
+            //strokeWeight(1);
+            //sphere(smoothedBoxSize/ 2);            
+            strokeWeight(0);
+            
+            sphere(smoothedBoxSize);
+        }
+        angle += 0.01f;
+    }
+
+    public void draw()
+    {
+        sphero();
+        grass();
+    }
+        
 } 
