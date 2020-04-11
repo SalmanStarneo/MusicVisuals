@@ -1,11 +1,21 @@
 package example;
 
-import javax.swing.border.Border;
+// import java.io.Console;
+import java.util.ArrayList;
+
+// import javax.swing.border.Border;
 
 import ie.tudublin.Visual;
 
+import processing.data.Table;
+import processing.data.TableRow;
+
 public class screenSaver extends Visual
 {
+    ArrayList <tuneCloud> cloudy = new ArrayList<tuneCloud>();
+
+    ArrayList <dayTime> Timeday = new ArrayList<dayTime>();
+    
     public void settings()
     {
         size(1024,800);
@@ -16,33 +26,59 @@ public class screenSaver extends Visual
         // skycolour=150;
         colorMode(HSB);
         // noCursor();
-        
+        reset();
         setFrameSize(256);
 
         startMinim();
-        loadAudio("heroplanet.mp3");
+        loadAudio("Aurora_Currents.wav");
+        loadData();
+        smooth();
+    }
+
+    public void loadData()
+    {
+        Table table = loadTable("clouds.csv","header");
+        for(TableRow row:table.rows())
+        {
+            tuneCloud c = new tuneCloud(row);
+            cloudy.add(c);
+        }
+
+
+        Table tableday = loadTable("TimeofDay.csv","header");
+        for(TableRow row:tableday.rows())
+        {
+            dayTime d = new dayTime(row);
+            Timeday.add(d);
+        }
+        
     }
 
     public void grass()
     {   
+        int cheight=10+(height/2);
         noStroke();
         fill(110,255,150);
-        rect(0, 700, width, height/2);
+        rect(0, 700, width, cheight);
         
     }
 
-    public void grassPrint()
+    public void flowers()
     {
-        int w=width;
-        int h = height;
-        int i=1;
-        float xt =  map(25, 0, i, 0, w/2);
-        float yt =  map(25, 0, i, 0, 600);
-        for(i=1; i<width; i++)
+        int w=width-50;
+        int h = height-50;
+        for(int i=0; i<width; i++)
         {
-            stroke(110,255,20);
-            fill(100,255,255);
-            square((xt) ,(yt), 25);
+            float xt =  map(i, 0, 5, 30, w);
+            noStroke();
+            fill(0,255,255);
+            ellipse(xt, h, 35, 50);
+            noStroke();
+            fill(0,255,255);
+            ellipse(xt, h, 55, 30);
+            stroke(110,255,0);
+            fill(50,205,255);
+            ellipse(xt, h, 20, 20);
         }
         
     }
@@ -66,8 +102,8 @@ public class screenSaver extends Visual
     public void sunDawn()
     {    
         calculateAverageAmplitude();
-        float sunSize = 200 + (getAmplitude() * 300);
-        stroke(35,255,255);
+        float sunSize = 200 + (getSmoothedAmplitude() * 300);
+        noStroke();
         fill(20,255,255);
         ellipse(width/4, height/4, sunSize,sunSize);
         
@@ -77,59 +113,84 @@ public class screenSaver extends Visual
     public void sunRays()
     {    
         // calculateAverageAmplitude();
-        // float sunbeam = 200 + (getAmplitude() * 300);
-        // stroke(sunbeam,255,255);
-        // fill(sunSize,255,255);
-        // ellipse(width/4, height/4, sunSize,sunSize);
-        // ellipse(width/4, height/4, sunbeam*2,sunbeam*2);
-        // float circy;
-        // float lerpedcircley;
-        // float lerpedw = 0;
-        // float circy = height / 2;
-        // float lerpedcircley = circy;
-        // float average = sum / ai.bufferSize();
-		// float w  = average * 1000;
-        // lerpedw = lerp(lerpedw, w, 0.1f);
-        // float average = sum / ai.bufferSize();
-
-		// float w  = average * 1000;
-		// lerpedw = lerp(lerpedw, w, 0.1f);
         
-    
+        float sunRayradius = 200*(210 + (getSmoothedAmplitude() * 300));
+        // noFill();
+        
+        for(int i=0 ; i < width ;i++)
+        {
+            fill(sunRayradius,255,255);
+            float rayR=10;
+            noFill();
+            stroke(getSmoothedAmplitude(), 200, 255);
+            ellipse(width/4, height/4, rayR, rayR);
+        }
+        // line(x1, y1, x2, y2);
+        
     }
 // turn this to cicle 
-    public void clouds(int x)
+
+    float skyObj=10;
+    
+    public void clouds(float movX)
     {
-        float cloudO=(height/2);
-        float cloudE=(height/2)-10;
-        float No = (getAmplitude() * 300);
-        int i;
-        for(No < width)
+        
+        float cloudO=(height/2.5f);
+        float cloudE=(height/2.5f)-10;
+        // int borderCloud=width-10;
+        float cloudX=lerp(10, cloudO*ADD, getSmoothedAmplitude());
+        // float cloudMov = 0;
+        
+        // translate(5, 0);
+        for(int No=0;No < width;No++)
         {
-            
+                // tuneCloud cNo = cloudy.get((int)No);
+                pushMatrix();
+                float xc = map(No, 0,9, 25, width-30);
                 noStroke();
-                fill(255, 0, 255);
-                ellipse(No, cloudO, 35, 30);
-                ellipse(No, cloudE, 25, 30);
-            
-            // No++;
+                float i = movX+xc;
+                fill(255, 0, 255); 
+                translate(5, cloudX);               
+                ellipse(i, cloudO, 35, 30);
+                ellipse(i, cloudE, 25, 30);
+                popMatrix();
         }
+        
     }
 
-    // public void clockframe()
-    // {}
+     public void resetflyObj()
+     {
+        skyObj=10;
+     }
+
+     public void reset()
+     {
+         resetflyObj();
+     }
+
+     public void moveflyObj()
+     {
+         skyObj++;
+
+         if(skyObj>width-10)
+         {
+            skyObj=10;
+         }
+
+     }
+    
     
    
     public void draw()
     {
         sky();
         sunDawn();
-        // sunRays();
+        sunRays();
         grass();
-        // grassPrint();
-        for(int i=1; i<width ; i++)
-        {
-            clouds(i);
-        }
+       flowers();
+        clouds(skyObj);
+        moveflyObj();
+        calculateAverageAmplitude();
+        
     }
 }

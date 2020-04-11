@@ -19,6 +19,12 @@ public class Main
         processing.core.PApplet.runSketch( a, new screenSaver());		
 	}
 
+	public void clock()
+	{
+		String[] a = {"MAIN"};
+        processing.core.PApplet.runSketch( a, new clockTime());		
+	}
+
 	public static void main(String[] args)
 	{
 		Main main = new Main();
