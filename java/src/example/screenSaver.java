@@ -14,15 +14,25 @@ public class screenSaver extends Visual
 {
     ArrayList <tuneCloud> cloudy = new ArrayList<tuneCloud>();
 
-    ArrayList <dayTime> Timeday = new ArrayList<dayTime>();
+    ArrayList <Starsky> StarLine = new ArrayList<Starsky>();
     
     public void settings()
     {
         size(1024,800);
     }   
+
+    float w ;
+    float h;
+    float hoursRadiusY;
+    float hoursRadiusX;
     
     public void setup()
-    {
+    {   
+        w = width*0.8f;
+        h = height*0.5f;
+        // int radius = min(width, height) / 10;
+        hoursRadiusY = (height*0.50f);
+        hoursRadiusX = (width *0.50f);
         // skycolour=150;
         colorMode(HSB);
         // noCursor();
@@ -48,18 +58,18 @@ public class screenSaver extends Visual
         }
 
 
-        Table tableday = loadTable("TimeofDay.csv","header");
+        Table tableday = loadTable("StarPostions.csv","header");
         for(TableRow row:tableday.rows())
         {
-            dayTime d = new dayTime(row);
-            Timeday.add(d);
+            Starsky s = new Starsky(row);
+            StarLine.add(s);
         }
         
     }
 
     public void grass()
     {   
-        int cheight=10+(height/2);
+        int cheight=10+(int)h;
         noStroke();
         fill(110,255,150);
         rect(0, 700, width, cheight);
@@ -98,29 +108,25 @@ public class screenSaver extends Visual
 
     public void sky()
     {
-        int colorgrid = -10;
-        float skywidth=width-5;
-        float skyX=map(1, 0, 1, 0, skywidth+5); 
-        int skyhalf= height/2;
-        for(int grid = 1; grid < height/2;grid++)
-        {
-            float skyY=map(grid, 0, grid, 0, height/2); 
-            noStroke();
-            fill(135,255,255-grid);
-            rect(skyX, skyY, height/7, width);
-          
-            colorgrid*=grid;
-        }
         
+        for(int i = 0 ; i < 25;i+=5)
+        {
+            float skyY= map(i, 0, i, 0, h);
+            // noStroke();
+            fill(170+i, 255, 185-i);
+            rect(0, skyY, width,skyY);
+        }
+          
     }
 
-    public void sunDawn()
+    public void SunAndMoon()
     {    
         calculateAverageAmplitude();
+        float hPos = map(hour() + norm(minute(), 0, 60), 0, 24, 0, TWO_PI * 2) - HALF_PI;
         float sunSize = 200 + (getSmoothedAmplitude() * 300);
         noStroke();
         fill(20,255,255);
-        ellipse(width/4, height/4, sunSize,sunSize);
+        ellipse((width/2)+cos(hPos)*hoursRadiusX, -(sin(hPos)*hoursRadiusY)-100, sunSize,sunSize);
         // rotate(30+second());
         
     
@@ -147,7 +153,7 @@ public class screenSaver extends Visual
 
     float skyObj=10;
     
-    public void clouds(float movX)
+    public void skyObjects(float movX)
     {
         float cloudO=(height/2.5f);
         float cloudE=((height/2.5f)-10);
@@ -175,7 +181,13 @@ public class screenSaver extends Visual
                 ellipse(i, cloudE, 25, 30);
                 popMatrix();
         }
-        
+        // Starsky s = new Starsky();
+        for(Starsky s:StarLine)
+        {
+            stroke(255,0,255);
+            point(s.getStarX(),s.getStarY());
+        }
+
     }
 
      public void resetflyObj()
@@ -192,9 +204,9 @@ public class screenSaver extends Visual
      {
          skyObj++;
 
-         if(skyObj>width-10)
+         if(skyObj>width-15)
          {
-            skyObj=10;
+            skyObj=15;
          }
 
      }
@@ -212,6 +224,9 @@ public class screenSaver extends Visual
          int clockColor=2;
 
          int clockCounter=0;
+
+         int midnightCheck=12;
+         int hourText=(hour()%12)+midnightCheck;
 
          String APM[]={" AM"," PM"};
 
@@ -235,7 +250,16 @@ public class screenSaver extends Visual
         {
             clockCounter=0;
         }
-        text(hour()%12+":"+minute()+":"+second()+APM[clockCounter], clockX+(clockCenter-50), (clockY+clockCenter-30));
+
+        if(hour()!=0)
+        {
+            midnightCheck=0;
+        }
+        else
+        {
+            midnightCheck=12;
+        }
+        text(hourText+":"+minute()+":"+second()+APM[clockCounter], clockX+(clockCenter-50), (clockY+clockCenter-30));
      }
 
     
@@ -243,15 +267,18 @@ public class screenSaver extends Visual
    
     public void draw()
     {
-        background(170,100,255);
+        
+        
+        background(165,155,255);
         // sky();
-        sunDawn();
-        sunRays();
+        SunAndMoon();
+        // sunRays();
         grass();
-       flowers();
-        clouds(skyObj);
+        flowers();
+        skyObjects(skyObj);
         moveflyObj();
         clockFrame();
+        
         calculateAverageAmplitude();
         
     }
