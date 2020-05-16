@@ -2,11 +2,12 @@ package MusicVisualAssignment.D18124618_Salman_Alsamiri;
 
 import java.util.ArrayList;
 
+import ddf.minim.AudioPlayer;
 import processing.data.Table;
 
 import processing.data.TableRow;
 
-public class screenSaver extends MyVisual
+public class screenSaver extends MyVisuals
 {
     ArrayList <tuneCloud> cloudy = new ArrayList<tuneCloud>();
 
@@ -17,6 +18,7 @@ public class screenSaver extends MyVisual
         size(800,800);
     }   
 
+    WaveForms wf;
     float w ;
     float wHalf;
     float h;
@@ -33,13 +35,14 @@ public class screenSaver extends MyVisual
         hoursRadiusX = (elipseRadius *0.50f);
         colorMode(HSB);
         // noCursor();
-        reset();
         setFrameSize(200);
         setSampleRate(44100);
         setFrameSize(1024);
 
         startMinim();
-        loadAudio("Aurora_Currents.wav");
+        loadAudio("Jeremy_Allingham_-_05_-_Better_Days.mp3");
+        wf = new WaveForms(this);
+        abv = new AudioBandsVisualPrint(this);
         calculateFrequencyBands();
         loadData();
         smooth();
@@ -103,46 +106,57 @@ public class screenSaver extends MyVisual
         }
     }
 
-    public void sky(int gridColors)
+    public void sky()
     {
+        float skyY;
+
+        // int skyGrid=10;
         
-        for(int i = 0 ; i < 25;i+=5)
+        for(int gridCounter = 0 ; gridCounter < h;gridCounter++)
         {
-            float skyY= map(i, 0, i, 0, h);
-            // noStroke();
-            fill(170+i, 255, 185-i);
-            rect(0, skyY, width,skyY);
+           skyY = map(gridCounter , 0, 70, 0, h);
+            noStroke();
+            fill((150*getSmoothedAmplitude()+gridCounter*2)-gridCounter, 255, 185);
+            rect(0, skyY , width , 100);
+            
         }
           
     }
 
+    float elipseRX;
+    float elipseRY;
+    float ellipseRSize;
     public void SunAndMoon()
     {    
-        calculateAverageAmplitude();
+        float ellipseSize = 200 + (getSmoothedAmplitude() * 300);
         float hPos = map(hour() + norm(minute(), 0, 60), 0, 24, 0, TWO_PI * 2) - HALF_PI;
-        float sunSize = 200 + (getSmoothedAmplitude() * 300);
+        float ellipseX = (wHalf+cos(hPos)*hoursRadiusX)+80;
+        float ellipseY = (h+sin(hPos)*hoursRadiusY);
         noStroke();
         fill(20,255,255);
-        ellipse((width/2)+cos(hPos)*hoursRadiusX, -(sin(hPos)*hoursRadiusY)-100, sunSize,sunSize);    
+        ellipse(ellipseX, ellipseY, ellipseSize,ellipseSize);  
+        elipseRX=ellipseX;
+        elipseRY=ellipseY; 
+        ellipseRSize=ellipseSize;
     
     }
-// add get and set 
-    public void sunRays()
-    {    
+// // add get and set 
+//     public void sunRays()
+//     {    
        
         
-        float sunRayradius = (300*(250 + (getSmoothedAmplitude() * 250)))/255;
+//         float sunRayradius = (300*(250 + (getSmoothedAmplitude() * 250)))/255;
         
-        for(int i=0 ; i < width ;i++)
-        {
-            fill(sunRayradius,255,255);
-            float rayR=sunRayradius/i;
-            noFill();
-            stroke(rayR*getAudioBuffer().get((int)sunRayradius), 200, 255);
-            ellipse(width/4, height/4, rayR, rayR);
-        }
+//         for(int i=0 ; i < width ;i++)
+//         {
+//             fill(sunRayradius,255,255);
+//             float rayR=sunRayradius/i;
+//             noFill();
+//             stroke(rayR*getAudioBuffer().get((int)sunRayradius), 200, 255);
+//             ellipse(width/4, height/4, rayR, rayR);
+//         }
         
-    }
+//     }
 // turn this to cicle 
 
     float skyObj=10;
@@ -151,19 +165,21 @@ public class screenSaver extends MyVisual
     {
         float cloudO=(height/2.5f);
         float cloudE=((height/2.5f)-10);
-        int cloudH= (int)((cloudE+cloudO)*getSmoothedAmplitude());
+        
         // for(tuneCloud c:cloudy)
         // {
         //      cloudO=cloudO+c.getTopCloud();
         //      cloudE=cloudE+c.getTopCloud();
         // }
-        // int borderCloud=width-10;
-        float cloudX=lerp(1, (cloudH), getSmoothedAmplitude());
-        // float randMov = random(-2, 2);
+        // int borderCloud=width-10;// float randMov = random(-2, 2);
+        
+        
         
         
         for(int No=0;No < width;No++)
         {
+                int cloudH= (int)((cloudE+cloudO)*getAudioBuffer().get(No));
+                float cloudX=lerp(1, (cloudH), getAudioBuffer().get(No));
                 // tuneCloud cNo = cloudy.get((int)No);
                 pushMatrix();
                 float xc = map(No, 0,7, 0, width-30);
@@ -260,16 +276,15 @@ public class screenSaver extends MyVisual
         
         
         background(165,155,255);
-        // sky(skyObj);
-        SunAndMoon();
-        // sunRays();
-        grass();
-        flowers();
+        sky();
+        calculateAverageAmplitude();
         skyObjects(skyObj);
         moveflyObj();
+        calculateFrequencyBands();
+        wf.render(elipseRX,elipseRY,ellipseRSize);
+        SunAndMoon();
+        grass();
+        flowers();
         clockFrame();
-        
-        calculateAverageAmplitude();
-        
     }
 }
