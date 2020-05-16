@@ -1,8 +1,6 @@
 package ie.tudublin;
 
-import example.*;
-// import example.CubeVisual1;
-// import example.MyVisual;
+import MusicVisualAssignment.D18124618_Salman_Alsamiri.*;
 
 public class Main
 {	

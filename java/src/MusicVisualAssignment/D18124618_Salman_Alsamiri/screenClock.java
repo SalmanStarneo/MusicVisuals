@@ -1,4 +1,4 @@
-package example;
+package MusicVisualAssignment.D18124618_Salman_Alsamiri;
 
 // import ie.tudublin.Visual;
 

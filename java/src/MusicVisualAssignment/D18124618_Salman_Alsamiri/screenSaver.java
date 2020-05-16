@@ -1,16 +1,12 @@
-package example;
+package MusicVisualAssignment.D18124618_Salman_Alsamiri;
 
-// import java.io.Console;
 import java.util.ArrayList;
 
-// import javax.swing.border.Border;
-
-import ie.tudublin.Visual;
-
 import processing.data.Table;
+
 import processing.data.TableRow;
 
-public class screenSaver extends Visual
+public class screenSaver extends MyVisual
 {
     ArrayList <tuneCloud> cloudy = new ArrayList<tuneCloud>();
 
@@ -18,10 +14,11 @@ public class screenSaver extends Visual
     
     public void settings()
     {
-        size(1024,800);
+        size(800,800);
     }   
 
     float w ;
+    float wHalf;
     float h;
     float hoursRadiusY;
     float hoursRadiusX;
@@ -29,15 +26,15 @@ public class screenSaver extends Visual
     public void setup()
     {   
         w = width*0.8f;
+        wHalf = width*0.5f;
         h = height*0.5f;
-        // int radius = min(width, height) / 10;
-        hoursRadiusY = (height*0.50f);
-        hoursRadiusX = (width *0.50f);
-        // skycolour=150;
+        int elipseRadius = min(width, height) /2;
+        hoursRadiusY = (elipseRadius*0.50f);
+        hoursRadiusX = (elipseRadius *0.50f);
         colorMode(HSB);
         // noCursor();
         reset();
-        setFrameSize(256);
+        setFrameSize(200);
         setSampleRate(44100);
         setFrameSize(1024);
 
@@ -106,7 +103,7 @@ public class screenSaver extends Visual
         }
     }
 
-    public void sky()
+    public void sky(int gridColors)
     {
         
         for(int i = 0 ; i < 25;i+=5)
@@ -126,18 +123,15 @@ public class screenSaver extends Visual
         float sunSize = 200 + (getSmoothedAmplitude() * 300);
         noStroke();
         fill(20,255,255);
-        ellipse((width/2)+cos(hPos)*hoursRadiusX, -(sin(hPos)*hoursRadiusY)-100, sunSize,sunSize);
-        // rotate(30+second());
-        
+        ellipse((width/2)+cos(hPos)*hoursRadiusX, -(sin(hPos)*hoursRadiusY)-100, sunSize,sunSize);    
     
     }
 // add get and set 
     public void sunRays()
     {    
-        // calculateAverageAmplitude();
+       
         
         float sunRayradius = (300*(250 + (getSmoothedAmplitude() * 250)))/255;
-        // noFill();
         
         for(int i=0 ; i < width ;i++)
         {
@@ -213,11 +207,11 @@ public class screenSaver extends Visual
 
      public void clockFrame()
      {
-         float w = width*0.67f;
-         float h = height*0.67f;
-         float clockX=map(200, 0, 200, 0, w);
+         float wClk = w-(w*0.6f);
+         float hClk = h+(h*0.4f);
+         float clockX=map(200, 0, 200, 0, wClk);
 
-         float clockY=map(200, 0, 200, 0, h);
+         float clockY=map(200, 0, 200, 0, hClk);
 
          int clockCenter=1;
 
@@ -225,8 +219,8 @@ public class screenSaver extends Visual
 
          int clockCounter=0;
 
-         int midnightCheck=12;
-         int hourText=(hour()%12)+midnightCheck;
+         int midnightCheck=0;
+         int hourText=(hour()%13)+midnightCheck;
 
          String APM[]={" AM"," PM"};
 
@@ -242,7 +236,7 @@ public class screenSaver extends Visual
         fill(255, 255, 0);
         textSize(25);
         strokeWeight(3);
-        if(hour()>12)
+        if(hour()>11||hour()==0)
         {
             clockCounter=1;
         }
@@ -251,14 +245,10 @@ public class screenSaver extends Visual
             clockCounter=0;
         }
 
-        if(hour()!=0)
-        {
-            midnightCheck=0;
-        }
-        else
-        {
-            midnightCheck=12;
-        }
+       while(hour()==0)
+       {
+         midnightCheck=12;
+       }
         text(hourText+":"+minute()+":"+second()+APM[clockCounter], clockX+(clockCenter-50), (clockY+clockCenter-30));
      }
 
@@ -270,7 +260,7 @@ public class screenSaver extends Visual
         
         
         background(165,155,255);
-        // sky();
+        // sky(skyObj);
         SunAndMoon();
         // sunRays();
         grass();
