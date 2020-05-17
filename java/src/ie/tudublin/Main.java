@@ -14,7 +14,7 @@ public class Main
 	public void star()
 	{
 		String[] a = {"MAIN"};
-        processing.core.PApplet.runSketch( a, new screenSaver());		
+        processing.core.PApplet.runSketch( a, new ScreenSaver());		
 	}
 
 	public void clock()

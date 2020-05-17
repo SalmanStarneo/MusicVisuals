@@ -5,36 +5,38 @@ import processing.core.*;
 // This is an example of a visual that renders the waveform
 public class WaveForms
 {
-    screenSaver mv;
+    ScreenSaver sS;
     float cx = 0;
     float cy = 0;
 
-    public WaveForms(screenSaver mv)
+    public WaveForms(ScreenSaver mv)
     {
-        this.mv = mv;
-        cx = this.mv.width / 4;
+        this.sS = mv;
+        cx = this.sS.width / 4;
         cy = mv.height / 4;
     }
-
+    
     public void render(float X, float Y, float rSize)
     {
         // for(int i = 0 ; i <( mv.getAudioBuffer().size()) ; i ++ )
         // {
-            mv.colorMode(PApplet.HSB);
-            for(int j = 0 ; j <( mv.getAudioBuffer().size()) ; j ++)
+            sS.colorMode(PApplet.HSB);
+            for(int j = 0 ; j <( sS.getAudioBuffer().size()) ; j ++)
             {
-                mv.noFill();
-                mv.stroke(
-                    PApplet.map(j, 0, mv.getAudioBuffer().size(), 0, 255)
+                sS.noFill();
+                sS.stroke(
+                    PApplet.map(j, 0, sS.getAudioBuffer().size(), 0, 255)
                     , 255
                     , 255
                 );
                 
                 // mv.line(X, (j*0.25f), ,j*0.25f);
-                mv.ellipse(X, Y , (rSize)+(rSize)* mv.getAudioBuffer().get((int)rSize), (rSize)+(rSize)* mv.getAudioBuffer().get((int)rSize));
+                sS.ellipse(X, Y , (rSize)+(rSize)* sS.getAudioBuffer().get((int)rSize)/4, (rSize)+(rSize)* sS.getAudioBuffer().get((int)rSize)/4);
 
                 // mv.line(X, (j*0.25f), X + X * mv.getAudioBuffer().get(j),j*0.25f);
-                mv.point((j), cx + cx * mv.getAudioBuffer().get(j));
+                sS.point((j), cx + cx * sS.getAudioBuffer().get(j));
+
+                sS.point(X, Y);
                 
             }
         // }

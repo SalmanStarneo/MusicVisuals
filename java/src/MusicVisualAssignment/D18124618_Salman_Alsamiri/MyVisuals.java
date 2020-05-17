@@ -30,7 +30,7 @@ public class MyVisuals extends Visual
         // startListening(); 
         
         // wf = new WaveForms(this);
-        abv = new AudioBandsVisualPrint(this);
+        // abv = new AudioBandsVisualPrint(this);
     }
 
     public void keyPressed()

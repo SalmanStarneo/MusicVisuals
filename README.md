@@ -1,8 +1,8 @@
 # Music Visualiser Project
 
-Name:
+Name:Salman AlSamiri
 
-Student Number: 
+Student Number: D18124618
 
 ## Instructions
 - Fork this repository and use it a starter project for your assignment
@@ -12,7 +12,7 @@ Student Number:
 - Check out the WaveForm and AudioBandsVisual for examples of how to call the Processing functions from other classes that are not subclasses of PApplet
 
 # Description of the assignment
-
+	The idea for this assignment is to create some sort of screen saver that dispalys time and play music, along with visual displays of objects mainly the sun and the moon depending on the time of the day 
 # Instructions
 
 # How it works

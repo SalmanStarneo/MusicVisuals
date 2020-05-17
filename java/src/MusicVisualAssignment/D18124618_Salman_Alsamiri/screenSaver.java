@@ -3,28 +3,36 @@ package MusicVisualAssignment.D18124618_Salman_Alsamiri;
 import java.util.ArrayList;
 
 import ddf.minim.AudioPlayer;
+import ddf.minim.analysis.FFT;
 import processing.data.Table;
 
 import processing.data.TableRow;
 
-public class screenSaver extends MyVisuals
+public class ScreenSaver extends MyVisuals
 {
     ArrayList <tuneCloud> cloudy = new ArrayList<tuneCloud>();
 
     ArrayList <Starsky> StarLine = new ArrayList<Starsky>();
+
+    ArrayList <SongPlayList> tuneBox = new ArrayList<SongPlayList>();
     
     public void settings()
     {
         size(800,800);
     }   
 
+    //Global objects & Variables 
     WaveForms wf;
+    SongPlayList spl;
+    AudioBandsVisualPrint abvp;
+    FFT fft;
     float w ;
     float wHalf;
     float h;
     float hoursRadiusY;
     float hoursRadiusX;
-    
+    String musicFile; 
+    int tuneOrder;
     public void setup()
     {   
         w = width*0.8f;
@@ -33,14 +41,15 @@ public class screenSaver extends MyVisuals
         int elipseRadius = min(width, height) /2;
         hoursRadiusY = (elipseRadius*0.50f);
         hoursRadiusX = (elipseRadius *0.50f);
+        tuneOrder = 0%12;
+        musicFile="Morning Routine.mp3";
         colorMode(HSB);
-        // noCursor();
         setFrameSize(200);
         setSampleRate(44100);
         setFrameSize(1024);
-
+        fft = new FFT(1, getSampleRate());
         startMinim();
-        loadAudio("Jeremy_Allingham_-_05_-_Better_Days.mp3");
+        loadAudio(musicFile);
         wf = new WaveForms(this);
         abv = new AudioBandsVisualPrint(this);
         calculateFrequencyBands();
@@ -63,6 +72,13 @@ public class screenSaver extends MyVisuals
         {
             Starsky s = new Starsky(row);
             StarLine.add(s);
+        }
+
+        Table tableSong = loadTable("SongsOfTheDay.csv","header");
+        for(TableRow row:tableSong.rows())
+        {
+            SongPlayList spl = new SongPlayList(row);
+            tuneBox.add(spl);
         }
         
     }
@@ -95,15 +111,67 @@ public class screenSaver extends MyVisuals
         }
         
     }
-
+    //Add tuneBox keys control
     public void keyPressed()
     {
         if (key == ' ')
         {
+            if((getAudioPlayer().isPlaying())==true)
+            {
+                getAudioPlayer().pause();
+            }
+            else
+            {
+                getAudioPlayer().play();
+            }
+            
+        }
+        if(keyCode == DOWN)
+        {
+            getAudioPlayer().pause();
+            getAudioPlayer().cue(0);
+        }
+        //Left to go to start of the playList
+        if(keyCode == RIGHT && tuneOrder==tuneBox.size()-1)
+        {
+            getAudioPlayer().cue(0);
+            getAudioPlayer().pause();
+            tuneOrder=0;
+            loadAudio(tuneBox.get(tuneOrder).getSongName());
+            getAudioPlayer().cue(0);
+            getAudioPlayer().play();
+           
+        }
+        else if(keyCode== RIGHT)
+        {
+            getAudioPlayer().cue(0);
+            getAudioPlayer().pause();
+            tuneOrder++;
+            loadAudio(tuneBox.get(tuneOrder).getSongName()); 
             getAudioPlayer().cue(0);
             getAudioPlayer().play();
             
         }
+        if(keyCode == LEFT&& tuneOrder==0)
+        {
+            getAudioPlayer().cue(0);
+            getAudioPlayer().pause();
+            tuneOrder=tuneBox.size()-1;
+            loadAudio(tuneBox.get(tuneOrder).getSongName());
+            getAudioPlayer().cue(0);
+            getAudioPlayer().play();
+        }
+        else if(keyCode == LEFT)
+        {
+            getAudioPlayer().cue(0); 
+            getAudioPlayer().pause();
+            tuneOrder--;
+            loadAudio(tuneBox.get(tuneOrder).getSongName());
+            getAudioPlayer().cue(0);
+            getAudioPlayer().play();
+            
+        }
+
     }
 
     public void sky()
@@ -116,7 +184,7 @@ public class screenSaver extends MyVisuals
         {
            skyY = map(gridCounter , 0, 70, 0, h);
             noStroke();
-            fill((150*getSmoothedAmplitude()+gridCounter*2)-gridCounter, 255, 185);
+            fill((150*getSmoothedAmplitude()+gridCounter*2)-gridCounter, (255*getSmoothedAmplitude()+gridCounter*2), (185));
             rect(0, skyY , width , 100);
             
         }
@@ -140,24 +208,6 @@ public class screenSaver extends MyVisuals
         ellipseRSize=ellipseSize;
     
     }
-// // add get and set 
-//     public void sunRays()
-//     {    
-       
-        
-//         float sunRayradius = (300*(250 + (getSmoothedAmplitude() * 250)))/255;
-        
-//         for(int i=0 ; i < width ;i++)
-//         {
-//             fill(sunRayradius,255,255);
-//             float rayR=sunRayradius/i;
-//             noFill();
-//             stroke(rayR*getAudioBuffer().get((int)sunRayradius), 200, 255);
-//             ellipse(width/4, height/4, rayR, rayR);
-//         }
-        
-//     }
-// turn this to cicle 
 
     float skyObj=10;
     
@@ -178,7 +228,7 @@ public class screenSaver extends MyVisuals
         
         for(int No=0;No < width;No++)
         {
-                int cloudH= (int)((cloudE+cloudO)*getAudioBuffer().get(No));
+                int cloudH= (int)((cloudE+cloudO)*getSmoothedAmplitude())/2;
                 float cloudX=lerp(1, (cloudH), getAudioBuffer().get(No));
                 // tuneCloud cNo = cloudy.get((int)No);
                 pushMatrix();
@@ -191,7 +241,7 @@ public class screenSaver extends MyVisuals
                 ellipse(i, cloudE, 25, 30);
                 popMatrix();
         }
-        // Starsky s = new Starsky();
+       //Stars
         for(Starsky s:StarLine)
         {
             stroke(255,0,255);
@@ -200,15 +250,6 @@ public class screenSaver extends MyVisuals
 
     }
 
-     public void resetflyObj()
-     {
-        skyObj=10;
-     }
-
-     public void reset()
-     {
-         resetflyObj();
-     }
 
      public void moveflyObj()
      {
@@ -221,10 +262,13 @@ public class screenSaver extends MyVisuals
 
      }
 
-     public void clockFrame()
+     public void tunePlayer()
+     {}
+
+     public void tuneClock()
      {
          float wClk = w-(w*0.6f);
-         float hClk = h+(h*0.4f);
+         float hClk = h+(h*0.25f);
          float clockX=map(200, 0, 200, 0, wClk);
 
          float clockY=map(200, 0, 200, 0, hClk);
@@ -236,7 +280,7 @@ public class screenSaver extends MyVisuals
          int clockCounter=0;
 
          int midnightCheck=0;
-         int hourText=(hour()%13)+midnightCheck;
+         int hourText=(hour()%12)+midnightCheck;
 
          String APM[]={" AM"," PM"};
 
@@ -244,13 +288,22 @@ public class screenSaver extends MyVisuals
         {
             fill(15,255/frameNo+clockColor,70*clockColor);
             stroke(255,255,0);
-            rect(clockX+clockCenter, clockY+(clockCenter/frameNo), (305+clockCenter)/frameNo, (150+clockCenter)/frameNo,5);
+            rect(clockX+clockCenter, clockY+(clockCenter/frameNo), (315+clockCenter)/frameNo, (210+clockCenter)/frameNo,5);
             clockCenter+=60;
             clockColor+=clockCenter;
             
         } 
+        // for(int frameNo=1; frameNo<=2;frameNo++)
+        // {
+        //     fill(15,255/frameNo+clockColor,70*clockColor);
+        //     stroke(255,255,0);
+        //     rect(clockX+clockCenter, clockY+(clockCenter/frameNo), (305+clockCenter)/frameNo, (180+clockCenter)/frameNo,5);
+        //     clockCenter+=60;
+        //     clockColor+=clockCenter;
+            
+        // } 
         fill(255, 255, 0);
-        textSize(25);
+        textSize(20);
         strokeWeight(3);
         if(hour()>11||hour()==0)
         {
@@ -265,26 +318,46 @@ public class screenSaver extends MyVisuals
        {
          midnightCheck=12;
        }
-        text(hourText+":"+minute()+":"+second()+APM[clockCounter], clockX+(clockCenter-50), (clockY+clockCenter-30));
-     }
+        text(hourText+":"+minute()+":"+second()+APM[clockCounter], clockX+(clockCenter-50), (clockY+clockCenter-55));
+        line(clockX+(clockCenter-50), (clockY+clockCenter-45), clockX+(clockCenter*2), (clockY+clockCenter-45));
+        text(day()+"/"+month()+"/"+year(), clockX+(clockCenter-50), (clockY+clockCenter+35));
+        textSize(13);
+        text(tuneBox.get(tuneOrder).toString(), clockX+(clockCenter-55), (clockY+clockCenter-30));
+        //clock mp3 player on/off 
+        float buttonPlaceX =(clockX+(clockCenter))+clockCenter*1.3f;
+        if(getAudioPlayer().isPlaying()==true)
+        {
+            text("ON !",buttonPlaceX-10, (clockY+clockCenter-5));
+            fill(100, 255, 230);
+            ellipse(buttonPlaceX, (clockY+clockCenter-45), 40, 40);
+        }
+        // else if(getAudioPlayer().isPlaying()==false)
+        // {
 
-    
-    
+        // }
+        else
+        {
+         
+            text("OFF",buttonPlaceX-10, (clockY+clockCenter-5));
+            fill(0, 255, 230);
+            ellipse(buttonPlaceX, (clockY+clockCenter-45), 40, 40);
+        }
+        
+     }
    
     public void draw()
-    {
-        
-        
+    {    
         background(165,155,255);
         sky();
         calculateAverageAmplitude();
-        skyObjects(skyObj);
-        moveflyObj();
+       
         calculateFrequencyBands();
         wf.render(elipseRX,elipseRY,ellipseRSize);
         SunAndMoon();
+        skyObjects(skyObj);
+        moveflyObj();
         grass();
         flowers();
-        clockFrame();
+        tuneClock();
     }
 }

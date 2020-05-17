@@ -5,21 +5,21 @@ import processing.core.*;
 // This is an example of a visual that uses the audio bands
 public class AudioBandsVisualPrint
 {
-    MyVisuals mv;
+    ScreenSaver sS;
 
-    public AudioBandsVisualPrint(MyVisuals mv)
+    public AudioBandsVisualPrint(ScreenSaver sS)
     {
-        this.mv = mv; 
+        this.sS = sS; 
     }
 
     public void render()
     {
-        float gap = mv.width / (float) mv.getBands().length;
-        mv.noStroke();
-        for(int i = 0 ; i < mv.getBands().length ; i ++)
+        float gap = sS.width / (float) sS.getBands().length;
+        sS.noStroke();
+        for(int i = 0 ; i < sS.getBands().length ; i ++)
         {
-            mv.fill(PApplet.map(i, 0, mv.getBands().length, 255, 0), 255, 255);
-            mv.rect(i * gap, mv.height, gap,-mv.getSmoothedBands()[i] * 0.2f); 
+            sS.fill(PApplet.map(i, 0, sS.getBands().length, 255, 0), 255, 255);
+            sS.rect(i * gap, sS.height, gap,-sS.getSmoothedBands()[i] * 0.2f); 
         }
     }
 }
