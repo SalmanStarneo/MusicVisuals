@@ -86,16 +86,16 @@ public class ScreenSaver extends MyVisuals
         int hG=10+(int)h;
         noStroke();
         fill(110,255,150);
-        rect(0, 700, width, h);
+        rect(0, 700, width, h-30);
         for(int i=0; i<width; i++)
         {
             fill(110,255,50);
             float xg =  map(i, 0, 30, 0, width+10);
             float yg =  map(i, 0, h, h+350, hG+350);
-            square(xg, yg-35, 20);
-            square(xg, yg-10, 20);
-            square(xg, yg+15, 20);
-            square(xg, yg+40, 20);
+            square(xg, yg-50, 20);
+            square(xg, yg-25, 20);
+            square(xg, yg, 20);
+            square(xg, yg+25, 20);
         }
         
     }
@@ -313,7 +313,7 @@ public class ScreenSaver extends MyVisuals
                 noStroke();
                 float i = movX+xc;
                 fill(255, 0, 255); 
-                translate(5, (cloudX+No));               
+                translate(5, (cloudX+No)+(cloudX+No)*getAudioBuffer().get(No));               
                 ellipse(i, cloudO, 45, 40);
                 ellipse(i, cloudE, 30, 40);
                 popMatrix();
