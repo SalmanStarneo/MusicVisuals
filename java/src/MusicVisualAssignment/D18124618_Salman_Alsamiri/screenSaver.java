@@ -1,8 +1,6 @@
 package MusicVisualAssignment.D18124618_Salman_Alsamiri;
 
 import java.util.ArrayList;
-
-import ddf.minim.AudioPlayer;
 import ddf.minim.analysis.FFT;
 import processing.data.Table;
 
@@ -16,15 +14,9 @@ public class ScreenSaver extends MyVisuals
 
     ArrayList <SongPlayList> tuneBox = new ArrayList<SongPlayList>();
     
-    public void settings()
-    {
-        size(800,800);
-    }   
-
     //Global objects & Variables 
     WaveForms wf;
     SongPlayList spl;
-    AudioBandsVisualPrint abvp;
     FFT fft;
     float w ;
     float wHalf;
@@ -34,6 +26,12 @@ public class ScreenSaver extends MyVisuals
     String musicFile; 
     int tuneOrder;
     int tunerKey;
+    
+    public void settings()
+    {
+        size(800,800);
+    }   
+
     public void setup()
     {   
         w = width*0.8f;
@@ -46,14 +44,12 @@ public class ScreenSaver extends MyVisuals
         musicFile="Morning Routine.mp3";
         tunerKey=0;
         colorMode(HSB);
-        setFrameSize(200);
         setSampleRate(44100);
         setFrameSize(1024);
         fft = new FFT(1, getSampleRate());
         startMinim();
         loadAudio(musicFile);
         wf = new WaveForms(this);
-        abv = new AudioBandsVisualPrint(this);
         calculateFrequencyBands();
         loadData();
         smooth();
@@ -90,13 +86,16 @@ public class ScreenSaver extends MyVisuals
         int hG=10+(int)h;
         noStroke();
         fill(110,255,150);
-        rect(0, 700, width, hG);
+        rect(0, 700, width, h);
         for(int i=0; i<width; i++)
         {
-
-            float xg =  map(i, 0, 10, 0, hG);
-            float yg =  map(i, 0, 10, 0, width);
-            point(xg, yg);
+            fill(110,255,50);
+            float xg =  map(i, 0, 30, 0, width+10);
+            float yg =  map(i, 0, h, h+350, hG+350);
+            square(xg, yg-35, 20);
+            square(xg, yg-10, 20);
+            square(xg, yg+15, 20);
+            square(xg, yg+40, 20);
         }
         
     }
@@ -119,7 +118,7 @@ public class ScreenSaver extends MyVisuals
         }
         
     }
-    //Add tuneBox keys control
+    
     public void keyPressed()
     {
         
@@ -265,8 +264,8 @@ public class ScreenSaver extends MyVisuals
         for(Starsky s:StarLine)
         {
             stroke(255,0,255);
-            point(s.getStarX(),s.getStarY());
-            point(s.getStarX2(),s.getStarY2());
+            point((s.getStarX()*getSmoothedAmplitude()+s.getStarX()),s.getStarY()*getSmoothedAmplitude()+s.getStarY());
+            point((s.getStarX2()*getSmoothedAmplitude()+s.getStarX2()),s.getStarY2()*getSmoothedAmplitude()+s.getStarY2());
 
         }
           
@@ -288,7 +287,7 @@ public class ScreenSaver extends MyVisuals
         }
         else
         {
-            fill(60,10,255);
+            fill(160,45,155);
         }
         
         ellipse(ellipseX, ellipseY, ellipseSize,ellipseSize);  
@@ -429,11 +428,9 @@ public class ScreenSaver extends MyVisuals
         sky();
         calculateAverageAmplitude();
         calculateFrequencyBands();
-        
         wf.render(elipseRX,elipseRY,ellipseRSize);
-        // abvp.render();
         SunAndMoon();
-        clouds(skyObj);
+        clouds(skyObj); 
         moveflyObj();
         grass();
         flowers();
