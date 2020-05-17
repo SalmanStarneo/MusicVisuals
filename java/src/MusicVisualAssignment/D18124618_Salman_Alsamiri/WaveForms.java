@@ -8,12 +8,12 @@ public class WaveForms
     ScreenSaver sS;
     float cx = 0;
     float cy = 0;
-
-    public WaveForms(ScreenSaver mv)
+    
+    public WaveForms(ScreenSaver sS)
     {
-        this.sS = mv;
-        cx = this.sS.width / 4;
-        cy = mv.height / 4;
+        this.sS = sS;
+        cx = sS.width / 4;
+        cy = sS.height / 4;
     }
     
     public void render(float X, float Y, float rSize)
@@ -30,13 +30,9 @@ public class WaveForms
                     , 255
                 );
                 
-                // mv.line(X, (j*0.25f), ,j*0.25f);
                 sS.ellipse(X, Y , (rSize)+(rSize)* sS.getAudioBuffer().get((int)rSize)/4, (rSize)+(rSize)* sS.getAudioBuffer().get((int)rSize)/4);
 
-                // mv.line(X, (j*0.25f), X + X * mv.getAudioBuffer().get(j),j*0.25f);
-                sS.point((j), cx + cx * sS.getAudioBuffer().get(j));
-
-                sS.point(X, Y);
+                sS.point((j), cy + cy * sS.getAudioBuffer().get(j)/4);
                 
             }
         // }

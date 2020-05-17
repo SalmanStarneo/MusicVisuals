@@ -10,7 +10,7 @@ import processing.data.TableRow;
 
 public class ScreenSaver extends MyVisuals
 {
-    ArrayList <tuneCloud> cloudy = new ArrayList<tuneCloud>();
+    ArrayList <TuneControls>controlButtons = new ArrayList<TuneControls>();
 
     ArrayList <Starsky> StarLine = new ArrayList<Starsky>();
 
@@ -33,6 +33,7 @@ public class ScreenSaver extends MyVisuals
     float hoursRadiusX;
     String musicFile; 
     int tuneOrder;
+    int tunerKey;
     public void setup()
     {   
         w = width*0.8f;
@@ -41,8 +42,9 @@ public class ScreenSaver extends MyVisuals
         int elipseRadius = min(width, height) /2;
         hoursRadiusY = (elipseRadius*0.50f);
         hoursRadiusX = (elipseRadius *0.50f);
-        tuneOrder = 0%12;
+        tuneOrder = hour()%12;
         musicFile="Morning Routine.mp3";
+        tunerKey=0;
         colorMode(HSB);
         setFrameSize(200);
         setSampleRate(44100);
@@ -59,11 +61,11 @@ public class ScreenSaver extends MyVisuals
 
     public void loadData()
     {
-        Table table = loadTable("clouds.csv","header");
+        Table table = loadTable("controlButtons.csv","header");
         for(TableRow row:table.rows())
         {
-            tuneCloud c = new tuneCloud(row);
-            cloudy.add(c);
+            TuneControls c = new TuneControls(row);
+            controlButtons.add(c);
         }
 
 
@@ -85,35 +87,42 @@ public class ScreenSaver extends MyVisuals
 
     public void grass()
     {   
-        int cheight=10+(int)h;
+        int hG=10+(int)h;
         noStroke();
         fill(110,255,150);
-        rect(0, 700, width, cheight);
+        rect(0, 700, width, hG);
+        for(int i=0; i<width; i++)
+        {
+
+            float xg =  map(i, 0, 10, 0, hG);
+            float yg =  map(i, 0, 10, 0, width);
+            point(xg, yg);
+        }
         
     }
 
     public void flowers()
     {
-        int w=width-50;
-        int h = height-50;
+        
+        int hflower = height-50;
         for(int i=0; i<width; i++)
         {
-            float xt =  map(i, 0, 5, 30, w);
+            float xt =  map(i, 0, 5, 30, wHalf);
             noStroke();
-            fill(getSmoothedAmplitude()*i,255,255);
-            ellipse(xt, h, 35, 50);
+            fill(getAudioBuffer().get(i)*minute()*10+30,255,225);
+            ellipse(xt, hflower, 35, 50);
             noStroke();
-            fill(getSmoothedAmplitude()*i,255,255);
-            ellipse(xt, h, 55, 30);
+            ellipse(xt, hflower, 55, 30);
             stroke(110,255,0);
             fill(50,205,255);
-            ellipse(xt, h, 20, 20);
+            ellipse(xt, hflower, 20, 20);
         }
         
     }
     //Add tuneBox keys control
     public void keyPressed()
     {
+        
         if (key == ' ')
         {
             if((getAudioPlayer().isPlaying())==true)
@@ -131,46 +140,111 @@ public class ScreenSaver extends MyVisuals
             getAudioPlayer().pause();
             getAudioPlayer().cue(0);
         }
-        //Left to go to start of the playList
+        if(keyCode == UP)
+        {
+            getAudioPlayer().pause();
+            getAudioPlayer().cue(0);
+            getAudioPlayer().play();
+        }
         if(keyCode == RIGHT && tuneOrder==tuneBox.size()-1)
         {
-            getAudioPlayer().cue(0);
             getAudioPlayer().pause();
+            getAudioPlayer().cue(0);
             tuneOrder=0;
             loadAudio(tuneBox.get(tuneOrder).getSongName());
-            getAudioPlayer().cue(0);
             getAudioPlayer().play();
            
         }
         else if(keyCode== RIGHT)
         {
-            getAudioPlayer().cue(0);
             getAudioPlayer().pause();
+            getAudioPlayer().cue(0);
             tuneOrder++;
             loadAudio(tuneBox.get(tuneOrder).getSongName()); 
-            getAudioPlayer().cue(0);
             getAudioPlayer().play();
             
         }
         if(keyCode == LEFT&& tuneOrder==0)
         {
-            getAudioPlayer().cue(0);
             getAudioPlayer().pause();
+            getAudioPlayer().cue(0);
             tuneOrder=tuneBox.size()-1;
             loadAudio(tuneBox.get(tuneOrder).getSongName());
-            getAudioPlayer().cue(0);
             getAudioPlayer().play();
         }
         else if(keyCode == LEFT)
         {
-            getAudioPlayer().cue(0); 
             getAudioPlayer().pause();
+            getAudioPlayer().cue(0);
             tuneOrder--;
             loadAudio(tuneBox.get(tuneOrder).getSongName());
-            getAudioPlayer().cue(0);
             getAudioPlayer().play();
             
         }
+
+    }
+
+    public void mousePressed()
+    {
+        
+        if((mouseX>=ctrlMousX[0]-15&&mouseX<=ctrlMousX[0]+15)&&(mouseY>=ctrlMousY[0]-15&&mouseY<=ctrlMousY[0]+15))
+        { 
+            getAudioPlayer().pause();
+            getAudioPlayer().cue(0);
+            if(tuneOrder==0)
+            {
+                tuneOrder=tuneBox.size()-1;
+                loadAudio(tuneBox.get(tuneOrder).getSongName());
+            }
+            else
+            {
+                tuneOrder--;
+                loadAudio(tuneBox.get(tuneOrder).getSongName());
+            }
+            getAudioPlayer().play();
+        }
+        if((mouseX>=ctrlMousX[1]-15&&mouseX<=ctrlMousX[1]+15)&&(mouseY>=ctrlMousY[1]-15&&mouseY<=ctrlMousY[1]+15))
+        {
+            getAudioPlayer().pause();
+            getAudioPlayer().cue(0);
+            getAudioPlayer().play();
+        }
+        if((mouseX>=ctrlMousX[2]-15&&mouseX<=ctrlMousX[2]+15)&&(mouseY>=ctrlMousY[2]-15&&mouseY<=ctrlMousY[2]+15))
+        {
+            if((getAudioPlayer().isPlaying())==true)
+            {
+                getAudioPlayer().pause();
+            }
+            else
+            {
+                getAudioPlayer().play();
+            }
+        }
+        if((mouseX>=ctrlMousX[3]-15&&mouseX<=ctrlMousX[3]+15)&&(mouseY>=ctrlMousY[3]-15&&mouseY<=ctrlMousY[3]+15))
+        {
+            getAudioPlayer().pause();
+            getAudioPlayer().cue(0);
+            if(tuneOrder==tuneBox.size()-1)
+            {
+                tuneOrder=0;
+                loadAudio(tuneBox.get(tuneOrder).getSongName());
+            }
+            else
+            {
+                tuneOrder++;
+                loadAudio(tuneBox.get(tuneOrder).getSongName());
+            }
+            getAudioPlayer().play();
+        }
+        if((mouseX>=ctrlMousX[4]-15&&mouseX<=ctrlMousX[4]+15)&&(mouseY>=ctrlMousY[4]-15&&mouseY<=ctrlMousY[4]+15))
+        {
+            if((getAudioPlayer().isPlaying())==true)
+            {
+                getAudioPlayer().pause();
+                getAudioPlayer().cue(0);
+            }
+        }
+        
 
     }
 
@@ -178,19 +252,26 @@ public class ScreenSaver extends MyVisuals
     {
         float skyY;
 
-        // int skyGrid=10;
+        
         
         for(int gridCounter = 0 ; gridCounter < h;gridCounter++)
         {
            skyY = map(gridCounter , 0, 70, 0, h);
             noStroke();
-            fill((150*getSmoothedAmplitude()+gridCounter*2)-gridCounter, (255*getSmoothedAmplitude()+gridCounter*2), (185));
+            fill((150*(getSmoothedBands()[gridCounter%10])+gridCounter*2)-gridCounter, (255*getSmoothedAmplitude()+gridCounter*2), (185));
             rect(0, skyY , width , 100);
             
         }
+        for(Starsky s:StarLine)
+        {
+            stroke(255,0,255);
+            point(s.getStarX(),s.getStarY());
+            point(s.getStarX2(),s.getStarY2());
+
+        }
           
     }
-
+    
     float elipseRX;
     float elipseRY;
     float ellipseRSize;
@@ -201,7 +282,15 @@ public class ScreenSaver extends MyVisuals
         float ellipseX = (wHalf+cos(hPos)*hoursRadiusX)+80;
         float ellipseY = (h+sin(hPos)*hoursRadiusY);
         noStroke();
-        fill(20,255,255);
+        if(hour()>4&&hour()<19)
+        {
+            fill(28,205,255);
+        }
+        else
+        {
+            fill(60,10,255);
+        }
+        
         ellipse(ellipseX, ellipseY, ellipseSize,ellipseSize);  
         elipseRX=ellipseX;
         elipseRY=ellipseY; 
@@ -211,41 +300,24 @@ public class ScreenSaver extends MyVisuals
 
     float skyObj=10;
     
-    public void skyObjects(float movX)
+    public void clouds(float movX)
     {
         float cloudO=(height/2.5f);
         float cloudE=((height/2.5f)-10);
-        
-        // for(tuneCloud c:cloudy)
-        // {
-        //      cloudO=cloudO+c.getTopCloud();
-        //      cloudE=cloudE+c.getTopCloud();
-        // }
-        // int borderCloud=width-10;// float randMov = random(-2, 2);
-        
-        
-        
         
         for(int No=0;No < width;No++)
         {
                 int cloudH= (int)((cloudE+cloudO)*getSmoothedAmplitude())/2;
                 float cloudX=lerp(1, (cloudH), getAudioBuffer().get(No));
-                // tuneCloud cNo = cloudy.get((int)No);
                 pushMatrix();
                 float xc = map(No, 0,7, 0, width-30);
                 noStroke();
                 float i = movX+xc;
                 fill(255, 0, 255); 
                 translate(5, (cloudX+No));               
-                ellipse(i, cloudO, 35, 30);
-                ellipse(i, cloudE, 25, 30);
+                ellipse(i, cloudO, 45, 40);
+                ellipse(i, cloudE, 30, 40);
                 popMatrix();
-        }
-       //Stars
-        for(Starsky s:StarLine)
-        {
-            stroke(255,0,255);
-            point(s.getStarX(),s.getStarY());
         }
 
     }
@@ -262,9 +334,9 @@ public class ScreenSaver extends MyVisuals
 
      }
 
-     public void tunePlayer()
-     {}
-
+     
+    int[] ctrlMousY = new int[5];
+     int []ctrlMousX=new int[5];
      public void tuneClock()
      {
          float wClk = w-(w*0.6f);
@@ -293,15 +365,7 @@ public class ScreenSaver extends MyVisuals
             clockColor+=clockCenter;
             
         } 
-        // for(int frameNo=1; frameNo<=2;frameNo++)
-        // {
-        //     fill(15,255/frameNo+clockColor,70*clockColor);
-        //     stroke(255,255,0);
-        //     rect(clockX+clockCenter, clockY+(clockCenter/frameNo), (305+clockCenter)/frameNo, (180+clockCenter)/frameNo,5);
-        //     clockCenter+=60;
-        //     clockColor+=clockCenter;
-            
-        // } 
+        
         fill(255, 255, 0);
         textSize(20);
         strokeWeight(3);
@@ -331,10 +395,6 @@ public class ScreenSaver extends MyVisuals
             fill(100, 255, 230);
             ellipse(buttonPlaceX, (clockY+clockCenter-45), 40, 40);
         }
-        // else if(getAudioPlayer().isPlaying()==false)
-        // {
-
-        // }
         else
         {
          
@@ -342,22 +402,49 @@ public class ScreenSaver extends MyVisuals
             fill(0, 255, 230);
             ellipse(buttonPlaceX, (clockY+clockCenter-45), 40, 40);
         }
+        float controlButtonsY = clockY+clockCenter*1.55f;
+        for(int clcki=0;clcki<5;clcki++)
+        {
+            TuneControls tc = controlButtons.get(clcki);
+            float controlButtonsX=map(clcki, 0, 5, clockX+50, (clockCenter-50)+clockX*2);
+            stroke(255,255,0);
+            fill(200,0,255);
+            ellipse(controlButtonsX, controlButtonsY, 40, 40);
+            fill(200,255,0);
+            textSize(18);
+            text(tc.getbuttonValue(), controlButtonsX-6, controlButtonsY+5);
+            ctrlMousX[clcki]=(int)controlButtonsX;
+            ctrlMousY[clcki]=(int)controlButtonsY;
+            // println("X:"+ctrlMousX[clcki]+" Y:"+ctrlMousY[clcki]);
+
+        }
         
      }
+    
+  
    
     public void draw()
     {    
         background(165,155,255);
         sky();
         calculateAverageAmplitude();
-       
         calculateFrequencyBands();
+        
         wf.render(elipseRX,elipseRY,ellipseRSize);
+        // abvp.render();
         SunAndMoon();
-        skyObjects(skyObj);
+        clouds(skyObj);
         moveflyObj();
         grass();
         flowers();
         tuneClock();
+        
+        while(tunerKey==0)
+        { 
+            tunerKey=1;
+            getAudioPlayer().cue(0);
+            musicFile=tuneBox.get(tuneOrder).getSongName();
+            loadAudio(musicFile); 
+        }
     }
 }

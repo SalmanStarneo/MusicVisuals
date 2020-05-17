@@ -19,7 +19,7 @@ public class AudioBandsVisualPrint
         for(int i = 0 ; i < sS.getBands().length ; i ++)
         {
             sS.fill(PApplet.map(i, 0, sS.getBands().length, 255, 0), 255, 255);
-            sS.rect(i * gap, sS.height, gap,-sS.getSmoothedBands()[i] * 0.2f); 
+            sS.rect((i * gap)/4, sS.height/4, gap/4,(-sS.getSmoothedBands()[i] * 0.2f)/4); 
         }
     }
 }
