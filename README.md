@@ -971,8 +971,7 @@ These are images of the output using an absolute URL:
 
 
 This is a youtube video:
+[![YouTube!Sun](http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://youtu.be/FpJllRVE9as)
+[![YouTube!Moon](http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://youtu.be/kEIHs-tjRFQ)
 
-[![YouTube](https://youtu.be/FpJllRVE9as)]
-
-[![YouTube](https://youtu.be/kEIHs-tjRFQ)]
 
