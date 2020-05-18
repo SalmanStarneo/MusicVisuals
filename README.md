@@ -966,7 +966,9 @@ These are images of the output using a relative URL:
 
 These are images of the output using an absolute URL:
 
-![The images  URL time](https://imgur.com/a/3Hx2JuR)
+![The images  URL time](https://imgur.com/ZInl6Nb)
+![The images  URL time](https://imgur.com/wFukrzH)
+
 
 
 These are youtube video URL:
