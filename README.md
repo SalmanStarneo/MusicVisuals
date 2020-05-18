@@ -966,11 +966,12 @@ These are images of the output using a relative URL:
 
 These are images of the output using an absolute URL:
 
-![The Night time](https://tudublin-my.sharepoint.com/:i:/g/personal/d18124618_mytudublin_ie/EVlPxIx6649Nk4S0pJrUb74BX37Vos8i2y2JG_96NhDiZg?e=cs90mq)
-![The Day time](https://tudublin-my.sharepoint.com/:i:/g/personal/d18124618_mytudublin_ie/EfChdqKRSxBElNgysrx0RaMBlK-tiFTokw1G9lqZfhGliw?e=E7xV8w)
+![The images  URL time](https://imgur.com/a/3Hx2JuR)
 
 
-This is a youtube video:
+These are youtube video URL:
+
+
 [![YouTube!Sun](http://img.youtube.com/vi/FpJllRVE9as/0.jpg)](https://youtu.be/FpJllRVE9as)
 [![YouTube!Moon](http://img.youtube.com/vi/kEIHs-tjRFQ/0.jpg)](https://youtu.be/kEIHs-tjRFQ)
 
