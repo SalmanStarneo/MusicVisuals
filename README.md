@@ -966,8 +966,8 @@ These are images of the output using a relative URL:
 
 These are images of the output using an absolute URL:
 
-![The images  URL time](https://imgur.com/ZInl6Nb)
-![The images  URL time](https://imgur.com/wFukrzH)
+![Imgur](https://i.imgur.com/ZInl6Nb.png)
+![Imgur](https://i.imgur.com/wFukrzH.png)
 
 
 
